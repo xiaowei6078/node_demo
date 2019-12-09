@@ -1,4 +1,4 @@
-const { SuccessMsg, ErrorMsg } = require("./messageModule");
+const { SuccessMsg, ErrorMsg } = require("../module/messageModule");
 
 const getUser = (req, res) => {
     const method = req.method;
