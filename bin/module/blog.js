@@ -2,25 +2,40 @@ const { SuccessMsg, ErrorMsg } = require("./messageModule");
 
 const getBlog = (req, res) => {
     const method = req.method;
-    const route = req.route;
-    console.log(route);
 
     if (method === "GET") {
-        return new SuccessMsg(
-            {
-                meghod: "GET"
-            },
-            "成功"
-        );
-    }
-
-    if (method === "POST") {
-        return new SuccessMsg(
-            {
-                meghod: "POST"
-            },
-            "成功"
-        );
+        if (req.route === "/api/blog/list") {
+            return new SuccessMsg(
+                {
+                    meghod: "GET"
+                },
+                "列表"
+            );
+        }
+        if (req.route === "/api/blog/detail") {
+            return new SuccessMsg(
+                {
+                    meghod: "GET"
+                },
+                "详情"
+            );
+        }
+        if (req.route === "/api/blog/new") {
+            return new SuccessMsg(
+                {
+                    meghod: "GET"
+                },
+                "创建"
+            );
+        }
+        if (req.route === "/api/blog/update") {
+            return new SuccessMsg(
+                {
+                    meghod: "GET"
+                },
+                "更新"
+            );
+        }
     }
 };
 
