@@ -40,9 +40,16 @@ const serverHeader = (req, res) => {
     getPostData(req).then(postData => {
         req.body = postData;
         
-        const blogData = blog(req, res);
-        if (blogData) {
-            res.end(JSON.stringify(blogData));
+        // const blogData = blog(req, res);
+        // if (blogResult) {                
+        //     res.end(JSON.stringify(blogData));
+        //     return;
+        // }
+        const blogResult = blog(req, res);
+        if (blogResult) {
+            blogResult.then(blogData => {
+                res.end(JSON.stringify(blogData));
+            })
             return;
         }
 
