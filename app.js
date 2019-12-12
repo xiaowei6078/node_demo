@@ -47,7 +47,7 @@ const serverHeader = (req, res) => {
         }
 
         const userData = user(req, res);
-        if (blogData) {
+        if (userData) {
             res.end(JSON.stringify(userData));
             return;
         }
