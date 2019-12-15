@@ -1,8 +1,10 @@
+const { exec } = require("../db/mysql")
+
 const login = (userName, password) => {
-    if (userName === '张三' && password === "123") {
-        return true;
-    }
-    return false;
+    const sql = `select * from users where username='${userName}' and password=${password}`;
+    return exec(sql).then(data => {
+        return data[0] || {};
+    })
 }
 module.exports = {
     login

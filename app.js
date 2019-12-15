@@ -1,7 +1,12 @@
 const querystring = require("querystring");
 const blog = require("./src/router/blog");
 const user = require("./src/router/user");
-const { ErrorMsg } = require("./src/module/messageModule");
+
+const getCookieExpires = () => {
+    const d = new Date();
+    d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
+    return d.toGMTString();
+}
 
 const getPostData = (req) => {
     const promise = new Promise((resolve, reject) =>{
@@ -28,6 +33,8 @@ const getPostData = (req) => {
     return promise;
 }
 
+let SESSION_DATA = {};
+
 const serverHeader = (req, res) => {
     res.setHeader("Content-type", "application/json");
 
@@ -36,6 +43,35 @@ const serverHeader = (req, res) => {
     req.route = urlArr[0];
     //get请求数据
     req.querystring = querystring.parse(urlArr[1] || "{}");
+
+    req.cookie = {};
+
+    req.session = {};
+
+    const cookieStr = req.headers.cookie || "";
+    cookieStr.split(";").forEach(item => {
+        if (!item) {
+            return;
+        }
+        const arr = item.split("=");
+        const key = arr[0].trim();
+        const val = arr[1].trim();
+        req.cookie[key] = val;
+    });
+
+    let needSetCookie = false;
+    let userId = req.cookie.userid;
+    if (userId) {
+        if (!SESSION_DATA[userId]) {
+            SESSION_DATA[userId] = {};
+        }
+    } else {
+        needSetCookie = true;
+        userId = `${Date.now()}_${Math.random()}`;
+        SESSION_DATA[userId] = {};
+
+    }
+    req.session = SESSION_DATA[userId];
 
     getPostData(req).then(postData => {
         req.body = postData;
@@ -47,6 +83,9 @@ const serverHeader = (req, res) => {
         // }
         const blogResult = blog(req, res);
         if (blogResult) {
+            if (needSetCookie) {
+                res.setHeader("Set-Cookie", `userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`);
+            }
             blogResult.then(blogData => {
                 res.end(JSON.stringify(blogData));
             })
@@ -55,7 +94,12 @@ const serverHeader = (req, res) => {
 
         const userData = user(req, res);
         if (userData) {
-            res.end(JSON.stringify(userData));
+            if (needSetCookie) {
+                res.setHeader("Set-Cookie", `userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`);
+            }
+            userData.then(data => {
+                res.end(JSON.stringify(data));
+            })
             return;
         }
 

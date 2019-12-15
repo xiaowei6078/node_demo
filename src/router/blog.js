@@ -30,20 +30,24 @@ const getBlog = (req, res) => {
             });
         }
         if (req.route === "/api/blog/update") {
-            const updateData = updateBlog(id, req.body);
-            if (updateData) {
-                return new SuccessMsg("更新成功");
-            } else {
-                return new ErrorMsg("更新失败");
-            }
+            const result = updateBlog(id, req.body);
+            return result.then(res => {
+                if (res) {
+                    return new SuccessMsg("更新成功");
+                } else {
+                    return new ErrorMsg("更新失败");
+                }
+            })
         }
         if (req.route === "/api/blog/del") {
-            const delData = delBlog(id);
-            if (delData) {
-                return new SuccessMsg("删除成功");
-            } else {
-                return new ErrorMsg("删除失败");
-            }
+            const result = delBlog(id, "lisi");
+            return result.then(res => {
+                if (res) {
+                    return new SuccessMsg("删除成功");
+                } else {
+                    return new ErrorMsg("删除失败");
+                }
+            });
         }
     }
 };
