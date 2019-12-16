@@ -102,14 +102,7 @@ const serverHeader = (req, res) => {
             })
             return;
         }
-
-        // res.end(
-        //     JSON.stringify(
-        //         new ErrorMsg({
-        //             msg: "404 not found"
-        //         })
-        //     )
-        // );
+        
         //路由地址不存在 报404  以文本的形式返回给客户端
         res.writeHead(404, {"Content-type": "text/plain"});
         res.write("404 Not Found\n");
